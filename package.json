@@ -1,0 +1,32 @@
+{
+  "name": "i18n-scanner",
+  "version": "0.0.1",
+  "description": "国际化命令行扫描工具",
+  "packageManager": "pnpm@10.13.0",
+  "main": "src/index.js",
+  "bin": {
+    "i18n": "src/index.js"
+  },
+  "scripts": {
+    "postinstall": "patch-package"
+  },
+  "keywords": ["i18n", "scan"],
+  "author": "hehe1111",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/generator": "^7.13.9",
+    "@babel/helper-module-imports": "^7.13.12",
+    "@babel/helper-plugin-utils": "^7.22.5",
+    "@babel/parser": "^7.13.13",
+    "@vue/compiler-dom": "^3.4.15",
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "cosmiconfig": "^9.0.0",
+    "fs-extra": "^10.0.0",
+    "glob": "^10.3.10",
+    "html-to-ast": "^0.0.6",
+    "patch-package": "^8.0.0",
+    "prettier": "3.2.4"
+  }
+}
