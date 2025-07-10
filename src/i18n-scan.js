@@ -23,6 +23,7 @@ module.exports = async function i18nScan({
   afterTransform
 }) {
   let _sourceCode
+  // 解决 <script></script> 中没有内容时，babel 会报错的问题
   if (sourceCode === '') {
     _sourceCode = ' '
   } else if (sourceCode) {
