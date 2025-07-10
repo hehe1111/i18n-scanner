@@ -14,12 +14,14 @@ const prettierConfig = require('./prettier-config')
  * @param {string} params.pluginOptions.importStatement
  * @param {string} params.pluginOptions.i18nCallee
  * @param {string} params.pluginOptions.output
+ * @param {boolean} [params.forceImport] 是否强制导入国际化包，即使没有需要替换的文本
  * @param {Function} [params.afterTransform] 代码处理完成后，提供一个钩子给外部，方便外部进行二次处理
  */
 module.exports = async function i18nScan({
   sourceCode,
   filePath,
   pluginOptions,
+  forceImport = false,
   afterTransform
 }) {
   let _sourceCode
@@ -47,7 +49,7 @@ module.exports = async function i18nScan({
   // 必须指定 targets：https://babeljs.io/docs/options#no-targets
   // > When no targets are specified: Babel will assume you are targeting the oldest browsers possible. For example, @babel/preset-env will transform all ES2015-ES2020 code to be ES5 compatible.
   const { code } = transformFromAstSync(ast, _sourceCode, {
-    plugins: [[i18nScanner, pluginOptions]],
+    plugins: [[i18nScanner, { ...pluginOptions, forceImport }]],
     /**
      * Specify the "root" folder that defines the location to search for "babel.config.js", and the default folder to allow `.babelrc` files inside of.
      *

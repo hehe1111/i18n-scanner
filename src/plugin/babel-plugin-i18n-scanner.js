@@ -40,8 +40,10 @@ module.exports = declare((api, options, dirname) => {
           state.i18nCallee = options.i18nCallee
         },
         exit(programPath, state) {
-          state[SHOULD_IMPORT] === true &&
+          // 如果设置了 forceImport 或者当前文件有需要替换的文本，则确保导入国际化包
+          if (options.forceImport || state[SHOULD_IMPORT] === true) {
             ensureImportI18nModule(api, programPath, options)
+          }
         }
       },
       ImportDeclaration(path) {
