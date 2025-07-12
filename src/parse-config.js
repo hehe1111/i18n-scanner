@@ -1,8 +1,9 @@
 // https://github.com/cosmiconfig/cosmiconfig
-import { cosmiconfigSync } from 'cosmiconfig'
+import { cosmiconfig } from 'cosmiconfig'
 
 const MODULE_NAME = 'i18n'
-const explorerSync = cosmiconfigSync(MODULE_NAME);
-const searchedFor = explorerSync.search() || {};
+const explorer = cosmiconfig(MODULE_NAME);
+
+const searchedFor = await explorer.search() || {};
 
 export default searchedFor.config || {}
