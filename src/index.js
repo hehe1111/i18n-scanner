@@ -17,9 +17,7 @@ const packageJson = require('../package.json')
 const VERSION = packageJson.version
 const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.vue']
 const DEFAULT_GLOB_PATH = './**/*'
-// FIXME: 这个应该要求用户传，不应该走默认值。待删除
 const DEFAULT_IMPORT_STATEMENT = 'import intl from "intl"'
-// FIXME: 这个应该要求用户传，不应该走默认值。待删除
 const DEFAULT_I18N_CALLEE = 'intl.t'
 const DEFAULT_OUTPUT = './i18n'
 
