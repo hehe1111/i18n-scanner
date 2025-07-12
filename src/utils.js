@@ -1,5 +1,8 @@
-const chalk = require('chalk')
-const package = require('../package.json')
+import chalk from 'chalk'
+import { createRequire } from 'node:module'
+
+const require = createRequire(import.meta.url)
+const packageJson = require('../package.json')
 
 /**
  * @param {string} text - 待处理的目标字符串
@@ -15,21 +18,21 @@ function containsChinese(text) {
  * @param {string} content
  */
 function log(content) {
-  console.log(`[${package.name}] ${content}`)
+  console.log(`[${packageJson.name}] ${content}`)
 }
 
 /**
  * @param {string} content
  */
 function successLog(content) {
-  console.log(chalk.green(`[${package.name}] ${content}`))
+  console.log(chalk.green(`[${packageJson.name}] ${content}`))
 }
 
 /**
  * @param {string} content
  */
 function errorLog(content) {
-  console.error(chalk.red(`[${package.name}] ${content}`))
+  console.error(chalk.red(`[${packageJson.name}] ${content}`))
 }
 
 /**
@@ -40,7 +43,7 @@ function errorLogAndExit(content) {
   process.exit(1)
 }
 
-module.exports = {
+export {
   containsChinese,
   log,
   successLog,

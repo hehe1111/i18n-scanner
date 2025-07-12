@@ -1,10 +1,15 @@
-const { transformFromAstSync, transformSync } = require('@babel/core')
-const parser = require('@babel/parser')
-const fse = require('fs-extra')
-const prettier = require('prettier')
-const i18nScanner = require('./plugin/babel-plugin-i18n-scanner')
-const { successLog } = require('./utils')
-const prettierConfig = require('./prettier-config')
+import { transformFromAstSync } from '@babel/core'
+import parser from '@babel/parser'
+import fse from 'fs-extra'
+import prettier from 'prettier'
+import i18nScanner from './plugin/babel-plugin-i18n-scanner.js'
+import { successLog } from './utils.js'
+import prettierConfig from './prettier-config.js'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 /**
  * @param {Object} params
@@ -17,7 +22,7 @@ const prettierConfig = require('./prettier-config')
  * @param {boolean} [params.forceImport] 是否强制导入国际化包，即使没有需要替换的文本
  * @param {Function} [params.afterTransform] 代码处理完成后，提供一个钩子给外部，方便外部进行二次处理
  */
-module.exports = async function i18nScan({
+export default async function i18nScan({
   sourceCode,
   filePath,
   pluginOptions,

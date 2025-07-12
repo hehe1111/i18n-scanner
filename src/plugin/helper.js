@@ -1,7 +1,7 @@
-const generate = require('@babel/generator').default
-const fse = require('fs-extra')
-const nodePath = require('node:path')
-const { containsChinese, errorLog } = require('../utils')
+import generator from '@babel/generator'
+import fse from 'fs-extra'
+import nodePath from 'node:path'
+import { containsChinese, errorLog } from '../utils.js'
 
 const TEXT_COLLECTION = 'TEXT_COLLECTION'
 /**
@@ -316,7 +316,7 @@ const literalUtils = {
     // <p>{intl.t(`content`, {}, `内容`)}</p>
     const targetPath = path.findParent(p => p.isCallExpression())
     const translated =
-      targetPath && generate(targetPath.node.callee).code === state.i18nCallee
+      targetPath && generator.default(targetPath.node.callee).code === state.i18nCallee
     if (translated) return true
 
     // 6. 不含有中文字符的，直接跳过。
@@ -495,7 +495,7 @@ const literalUtils = {
         // 1. `a ${x}`     => { quasis: ['a', ''], expressions: [x] }     => x
         // 2. `a ${x + y}` => { quasis: ['a', ''], expressions: [x + y] } => x + y
         // 3. `a ${x()}`   => { quasis: ['a', ''], expressions: [x()] }   => x()
-        placeholderASTHash[placeholder] = generate(ast).code
+        placeholderASTHash[placeholder] = generator.default(ast).code
         return result
       }, getValueInQuasis(path, 0))
 
@@ -591,7 +591,7 @@ function writeTextCollectionToFile(file, options) {
   fse.writeFileSync(filePath, `{\n${content}\n}`, 'utf8')
 }
 
-module.exports = {
+export {
   SHOULD_IMPORT,
 
   validateOptions,

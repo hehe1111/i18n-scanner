@@ -1,18 +1,21 @@
 #!/usr/bin/env node
 
 // https://github.com/tj/commander.js
-const { Command } = require('commander')
+import { Command } from 'commander'
 // https://github.com/isaacs/node-glob
-const { globSync } = require('glob')
-const fse = require('fs-extra')
-const path = require('node:path')
-const package = require('../package.json')
-const i18nScan = require('./i18n-scan')
-const parsedConfig = require('./parse-config')
-const handleVueSFC = require('./sfc/handle-vue-sfc')
-const { errorLogAndExit } = require('./utils')
+import { globSync } from 'glob'
+import fse from 'fs-extra'
+import path from 'node:path'
+import { createRequire } from 'node:module'
+import i18nScan from './i18n-scan.js'
+import parsedConfig from './parse-config.js'
+import handleVueSFC from './sfc/handle-vue-sfc.js'
+import { errorLogAndExit } from './utils.js'
 
-const VERSION = package.version
+const require = createRequire(import.meta.url)
+const packageJson = require('../package.json')
+
+const VERSION = packageJson.version
 const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.vue']
 const DEFAULT_GLOB_PATH = './**/*'
 // FIXME: 这个应该要求用户传，不应该走默认值。待删除

@@ -1,8 +1,8 @@
 // https://github.com/cosmiconfig/cosmiconfig
-const { cosmiconfigSync } = require('cosmiconfig');
+import { cosmiconfigSync } from 'cosmiconfig'
 
 const MODULE_NAME = 'i18n'
 const explorerSync = cosmiconfigSync(MODULE_NAME);
 const searchedFor = explorerSync.search() || {};
 
-module.exports = searchedFor.config || {}
+export default searchedFor.config || {}

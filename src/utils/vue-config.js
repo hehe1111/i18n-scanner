@@ -1,4 +1,6 @@
-const { askScriptTagConfig } = require('./interactive')
+import { askScriptTagConfig } from './interactive.js'
+import path from 'node:path'
+import fse from 'fs-extra'
 
 /**
  * 从项目中自动检测 Vue 配置
@@ -6,8 +8,6 @@ const { askScriptTagConfig } = require('./interactive')
  * @returns {Promise<{version?: number, useTypeScript?: boolean}>}
  */
 async function detectVueConfig(projectRoot) {
-  const path = require('node:path')
-  const fse = require('fs-extra')
   
   try {
     // 检查 package.json 中的依赖
@@ -118,7 +118,7 @@ async function resolveVueScriptConfig(vueConfig = {}, projectRoot = process.cwd(
   }
 }
 
-module.exports = {
+export {
   detectVueConfig,
   resolveVueScriptConfig
 }

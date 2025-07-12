@@ -1,11 +1,11 @@
-const fse = require('fs-extra')
-const { parse } = require('@vue/compiler-dom')
-const prettier = require('prettier')
-const { traverse } = require('./template-ast-traverse')
-const { VueTemplateASTPrinter } = require('./template-ast-printer')
-const i18nScan = require('../i18n-scan')
-const prettierConfig = require('../prettier-config')
-const { resolveVueScriptConfig } = require('../utils/vue-config')
+import fse from 'fs-extra'
+import { parse } from '@vue/compiler-dom'
+import prettier from 'prettier'
+import { traverse } from './template-ast-traverse.js'
+import { VueTemplateASTPrinter } from './template-ast-printer.js'
+import i18nScan from '../i18n-scan.js'
+import prettierConfig from '../prettier-config.js'
+import { resolveVueScriptConfig } from '../utils/vue-config.js'
 
 /**
  * @param {Object} params
@@ -15,7 +15,7 @@ const { resolveVueScriptConfig } = require('../utils/vue-config')
  * @param {string} params.pluginOptions.i18nCallee
  * @param {string} params.pluginOptions.output
  */
-module.exports = async function handleVueSFC({ filePath, pluginOptions }) {
+export default async function handleVueSFC({ filePath, pluginOptions }) {
   const encoding = { encoding: 'utf-8' }
   let content = fse.readFileSync(filePath, encoding)
   

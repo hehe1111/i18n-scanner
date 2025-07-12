@@ -1,6 +1,6 @@
-const i18nScan = require('../i18n-scan')
-const { containsChinese } = require('../utils')
-const { TYPE, TEMPLATE, HELPER_STRING, POST_I18N } = require('./constants')
+import i18nScan from '../i18n-scan.js'
+import { containsChinese } from '../utils.js'
+import { TYPE, TEMPLATE, HELPER_STRING, POST_I18N } from './constants.js'
 
 /**
  * @param {Object} params
@@ -145,6 +145,6 @@ function i18nHelper({
   })
 }
 
-module.exports = {
+export {
   traverse
 }

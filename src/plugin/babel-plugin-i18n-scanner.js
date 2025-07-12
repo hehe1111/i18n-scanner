@@ -12,9 +12,9 @@
 //   }, a)
 // }
 
-const { declare } = require('@babel/helper-plugin-utils')
+import { declare } from '@babel/helper-plugin-utils'
 
-const {
+import {
   SHOULD_IMPORT,
   validateOptions,
   readFromOutputFile,
@@ -23,9 +23,9 @@ const {
   literalUtils,
   jsxTextUtils,
   writeTextCollectionToFile
-} = require('./helper')
+} from './helper.js'
 
-module.exports = declare((api, options, dirname) => {
+export default declare((api, options, dirname) => {
   validateOptions(api, options)
 
   return {

@@ -1,4 +1,4 @@
-const readline = require('readline')
+import readline from 'readline'
 
 /**
  * 创建命令行交互界面
@@ -116,7 +116,7 @@ async function askScriptTagConfig(detectedVersion, detectedTypeScript, detectedS
   }
 }
 
-module.exports = {
+export {
   askQuestion,
   askYesNo,
   askChoice,

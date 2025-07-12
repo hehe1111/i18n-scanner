@@ -1,5 +1,5 @@
 // https://prettier.io/docs/en/options
-module.exports = {
+export default {
   semi: false,
   singleQuote: true,
   trailingComma: 'none'

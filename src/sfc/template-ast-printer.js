@@ -1,4 +1,4 @@
-const { TYPE, TEMPLATE, POST_I18N } = require('./constants')
+import { TYPE, TEMPLATE, POST_I18N } from './constants.js'
 
 class VueTemplateASTPrinter {
   constructor() {
@@ -143,6 +143,6 @@ class VueTemplateASTPrinter {
   }
 }
 
-module.exports = {
+export {
   VueTemplateASTPrinter
 }

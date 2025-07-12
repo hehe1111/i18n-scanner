@@ -2,6 +2,7 @@
   "name": "i18n-scanner",
   "version": "0.0.1",
   "description": "国际化命令行扫描工具",
+  "type": "module",
   "packageManager": "pnpm@10.13.0",
   "main": "src/index.js",
   "bin": {

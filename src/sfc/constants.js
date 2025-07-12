@@ -12,7 +12,7 @@ const TEMPLATE = 'template'
 const POST_I18N = '__POST_I18N__'
 const HELPER_STRING = 'const __special_to_avoid_conflict__ = '
 
-module.exports = {
+export {
   TYPE,
   TEMPLATE,
   POST_I18N,
