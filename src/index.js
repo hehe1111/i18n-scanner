@@ -39,6 +39,8 @@ program
   .option('-e, --ext <string>', 'File extensions. The kind of files to handle.', DEFAULT_EXTENSIONS.join())
   .option('-o, --output <string>', 'Directory path to place output files.', DEFAULT_OUTPUT)
   .option('-c, --config <string>', 'Path to configuration file.')
+  .option('--include <patterns>', 'Comma-separated list of glob patterns to include.')
+  .option('--exclude <patterns>', 'Comma-separated list of glob patterns to exclude.')
   .option('--vue-version <number>', 'Vue version (2 or 3). Affects script tag generation.')
   .option('--use-typescript', 'Use TypeScript for generated script tags.')
   .option('--no-typescript', 'Do not use TypeScript for generated script tags.')
@@ -48,11 +50,82 @@ program
 
 program.parse()
 
+/**
+ * 解析模式字符串为数组
+ * @param {string|string[]} patterns - 逗号分隔的模式字符串或数组
+ * @returns {string[]|null} 模式数组
+ */
+function parsePatterns(patterns) {
+  if (!patterns) return null
+  if (Array.isArray(patterns)) return patterns
+  return patterns.split(',').map(p => p.trim()).filter(Boolean)
+}
+
+/**
+ * 过滤文件列表，应用 include/exclude 规则
+ * @param {string[]} files - 文件路径列表
+ * @param {string[]} includePatterns - 包含模式
+ * @param {string[]} excludePatterns - 排除模式
+ * @returns {string[]} 过滤后的文件列表
+ */
+function filterFiles(files, includePatterns, excludePatterns) {
+  let filteredFiles = files
+
+  // 应用 include 过滤
+  if (includePatterns && includePatterns.length > 0) {
+    filteredFiles = files.filter(file => {
+      return includePatterns.some(pattern => {
+        // 检查文件路径和基础文件名
+        const fileName = path.basename(file)
+        const fullPath = file
+        
+        const regex = new RegExp(
+          '^' + pattern
+            .replace(/\./g, '\\.')
+            .replace(/\*\*/g, '.*')
+            .replace(/\*/g, '[^/]*')
+            .replace(/\?/g, '[^/]') + '$'
+        )
+        
+        // 同时检查完整路径和文件名
+        return regex.test(fullPath) || regex.test(fileName)
+      })
+    })
+  }
+
+  // 应用 exclude 过滤
+  if (excludePatterns && excludePatterns.length > 0) {
+    filteredFiles = filteredFiles.filter(file => {
+      return !excludePatterns.some(pattern => {
+        const fileName = path.basename(file)
+        const fullPath = file
+        
+        const regex = new RegExp(
+          '^' + pattern
+            .replace(/\./g, '\\.')
+            .replace(/\*\*/g, '.*')
+            .replace(/\*/g, '[^/]*')
+            .replace(/\?/g, '[^/]') + '$'
+        )
+        
+        // 同时检查完整路径和文件名
+        return regex.test(fullPath) || regex.test(fileName)
+      })
+    })
+  }
+
+  return filteredFiles
+}
+
 // TODO: JSDoc 注释
 async function onScan(pathStr, options) {
   // 异步导入配置
   const { parseUserConfig } = await import('./parse-user-config.js')
   const parsedConfig = await parseUserConfig(options.config)
+
+  // 处理 include/exclude 配置
+  const includePatterns = parsePatterns(options.include) || parsePatterns(parsedConfig.include) || []
+  const excludePatterns = parsePatterns(options.exclude) || parsePatterns(parsedConfig.exclude) || []
 
   // TODO: 在 windows 下，用户传入的路径可能使用了单反斜杠 D:\path\using\backslash，没有使用双斜杠，这种场景下，str 会是 D:pathusingbackslash，单斜杠会被吞掉。暂时想不到好的处理方法，先不处理
   // ! 暂时只支持斜杠，不支持反斜杠
@@ -94,9 +167,12 @@ async function onScan(pathStr, options) {
     }
   }
   // don't look in node_modules
-  const filePathList = globSync(pathStr, {
+  let filePathList = globSync(pathStr, {
     ignore: 'node_modules/**'
   })
+
+  // 应用 include/exclude 过滤
+  filePathList = filterFiles(filePathList, includePatterns, excludePatterns)
 
   filePathList.length === 0 && errorLogAndExit('Nothing to scan.')
 
