@@ -9,6 +9,7 @@
     "i18n": "src/index.js"
   },
   "scripts": {
+    "test": "node src/index.js scan fixtures/",
     "postinstall": "patch-package"
   },
   "keywords": ["i18n", "scan"],
