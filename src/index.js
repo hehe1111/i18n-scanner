@@ -50,8 +50,8 @@ program.parse()
 // TODO: JSDoc 注释
 async function onScan(pathStr, options) {
   // 异步导入配置
-  const { default: parsedConfig } = await import('./parse-config.js')
-  
+  const { default: parsedConfig } = await import('./parse-user-config.js')
+
   // TODO: 在 windows 下，用户传入的路径可能使用了单反斜杠 D:\path\using\backslash，没有使用双斜杠，这种场景下，str 会是 D:pathusingbackslash，单斜杠会被吞掉。暂时想不到好的处理方法，先不处理
   // ! 暂时只支持斜杠，不支持反斜杠
 
