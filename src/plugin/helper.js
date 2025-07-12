@@ -1,4 +1,4 @@
-import generator from '@babel/generator'
+import { generate } from '@babel/generator'
 import fse from 'fs-extra'
 import nodePath from 'node:path'
 import { containsChinese, errorLog } from '../utils.js'
@@ -316,7 +316,7 @@ const literalUtils = {
     // <p>{intl.t(`content`, {}, `内容`)}</p>
     const targetPath = path.findParent(p => p.isCallExpression())
     const translated =
-      targetPath && generator.default(targetPath.node.callee).code === state.i18nCallee
+      targetPath && generate(targetPath.node.callee).code === state.i18nCallee
     if (translated) return true
 
     // 6. 不含有中文字符的，直接跳过。
@@ -495,7 +495,7 @@ const literalUtils = {
         // 1. `a ${x}`     => { quasis: ['a', ''], expressions: [x] }     => x
         // 2. `a ${x + y}` => { quasis: ['a', ''], expressions: [x + y] } => x + y
         // 3. `a ${x()}`   => { quasis: ['a', ''], expressions: [x()] }   => x()
-        placeholderASTHash[placeholder] = generator.default(ast).code
+        placeholderASTHash[placeholder] = generate(ast).code
         return result
       }, getValueInQuasis(path, 0))
 
