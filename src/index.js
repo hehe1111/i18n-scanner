@@ -103,11 +103,11 @@ async function onScan(pathStr, options) {
       // 1. path/to/*
       pathStr += `.${extensionsStr}`
     } else if (pathStr.endsWith('/')) {
-      // 2. path/to/
-      pathStr += `*.${extensionsStr}`
+      // 2. path/to/ -> path/to/**/*.{ext}
+      pathStr += `**/*.${extensionsStr}`
     } else {
-      // 3. path/to
-      pathStr += `/*.${extensionsStr}`
+      // 3. path/to -> path/to/**/*.{ext}
+      pathStr += `/**/*.${extensionsStr}`
     }
   }
   // 构建 glob 的 ignore 选项
