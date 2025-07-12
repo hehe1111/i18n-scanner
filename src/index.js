@@ -110,19 +110,20 @@ async function onScan(pathStr, options) {
   }
   // 构建 glob 的 ignore 选项
   const ignorePatterns = ['node_modules/**', ...excludePatterns]
-  
+
   let filePathList
   if (includePatterns.length > 0) {
     // 如果有 include 模式，对每个模式单独执行 glob，然后合并结果
     const allFiles = new Set()
     for (const pattern of includePatterns) {
       // 为 include 模式添加路径前缀
-      const fullPattern = pattern.startsWith('./') || pattern.includes('/') 
-        ? pattern 
+      const fullPattern = pattern.startsWith('./') || pattern.includes('/')
+        ? pattern
         : path.join(path.dirname(pathStr), pattern)
       const files = globSync(fullPattern, {
         ignore: ignorePatterns,
-        cwd: process.cwd()
+        cwd: process.cwd(),
+        nodir: true  // 只匹配文件，不匹配目录
       })
       files.forEach(file => allFiles.add(file))
     }
@@ -130,7 +131,8 @@ async function onScan(pathStr, options) {
   } else {
     // 没有 include 模式，使用原来的路径模式
     filePathList = globSync(pathStr, {
-      ignore: ignorePatterns
+      ignore: ignorePatterns,
+      nodir: true  // 只匹配文件，不匹配目录
     })
   }
 
