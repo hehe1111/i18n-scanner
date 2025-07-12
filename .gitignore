@@ -8,3 +8,5 @@ DS_Store
 dist/
 .log
 .error
+CLAUDE.md
+.claude/
