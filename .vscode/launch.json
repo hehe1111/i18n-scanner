@@ -23,7 +23,7 @@
     // },
 
     {
-      "name": "Debug i18n scan with specific path",
+      "name": "pnpm test",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "pnpm",
