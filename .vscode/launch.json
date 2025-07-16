@@ -1,0 +1,87 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // {
+    //   "name": "Debug i18n scan (current directory)",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["scan"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // },
+    // {
+    //   "name": "Debug i18n scan with specific path",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["scan", "./fixtures/**/*"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // },
+
+    {
+      "name": "Debug i18n scan with specific path",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["test"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"]
+    }
+
+    // {
+    //   "name": "Debug i18n scan with extensions",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["scan", "--ext", ".js,.jsx,.ts,.tsx"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // },
+    // {
+    //   "name": "Debug i18n scan with output",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["scan", "--output", "./output"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // },
+    // {
+    //   "name": "Debug i18n scan with custom args",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["scan"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"],
+    //   "stopOnEntry": false
+    // },
+    // {
+    //   "name": "Debug i18n --help",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/index.js",
+    //   "args": ["--help"],
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // },
+    // {
+    //   "name": "Debug specific file",
+    //   "type": "node",
+    //   "request": "launch",
+    //   "program": "${workspaceFolder}/src/i18n-scan.js",
+    //   "console": "integratedTerminal",
+    //   "cwd": "${workspaceFolder}",
+    //   "skipFiles": ["<node_internals>/**"]
+    // }
+  ]
+}

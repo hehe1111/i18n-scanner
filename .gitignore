@@ -2,6 +2,7 @@ node_modules/
 src/output/
 i18n/
 .vscode
+!.vscode/launch.json
 DS_Store
 .DS_Store
 .idea/
