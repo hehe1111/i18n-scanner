@@ -2,7 +2,7 @@
 
 一个用于 `.js|.jsx|.ts|.tsx|.vue` 文件国际化的命令行工具。
 
-[](./showcase/01.mp4)
+![演示](./showcase.gif)
 
 ## 安装
 
@@ -32,8 +32,7 @@ i18n scan --output <输出文案文件，需要内置默认值>
 export default {
   i18nCallee: 'i18nFake.t',
   output: './fixtures/here-is-where-i-put-my-i18n-files',
-  importStatement:
-    'import i18nFake from "my-awesome-i18n-lib-that-does-not-exist"',
+  importStatement: 'import i18nFake from "my-awesome-i18n-lib-that-does-not-exist"',
   exclude: ['**/*.config.js']
 }
 ```
