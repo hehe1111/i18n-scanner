@@ -1,17 +1,3 @@
-// TODO: 命名空间支持
-// i18n.t('xxx', { namespace: '', placeholder: title }, '兜底')
-// function t(key, payload, originText) {
-//   const textCollection = file.get(TEXT_COLLECTION)
-//   const a = textCollection[key]
-//   // a 'xxx {placeholder1} ... {placeholder2} ...'
-//   return Object.keys(payload).reduce((result, key) => {
-//     if (key === 'namespace') {
-//       return result
-//     }
-//     return result.replace(`${key}`, payload[key])
-//   }, a)
-// }
-
 import { declare } from '@babel/helper-plugin-utils'
 
 import {

@@ -59,7 +59,6 @@ function parsePatterns(patterns) {
   return patterns.split(',').map(p => p.trim()).filter(Boolean)
 }
 
-// TODO: JSDoc 注释
 async function onScan(pathStr, options) {
   // 异步导入配置
   const { parseUserConfig } = await import('./parse-user-config.js')
