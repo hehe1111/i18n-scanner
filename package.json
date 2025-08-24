@@ -1,6 +1,6 @@
 {
   "name": "@hehe1111/i18n-scanner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "国际化命令行扫描工具",
   "type": "module",
   "packageManager": "pnpm@10.13.0",
@@ -19,6 +19,7 @@
     "src",
     "package.json"
   ],
+  "repository": "https://github.com/hehe1111/i18n-scanner",
   "dependencies": {
     "@babel/core": "^7.13.14",
     "@babel/generator": "^7.13.9",
