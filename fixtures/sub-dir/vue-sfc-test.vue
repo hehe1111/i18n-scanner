@@ -6,7 +6,24 @@
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+
+const a = '你好'
+
+function foo() {
+  return '这是一个函数'
+}
+
+class Bar {
+  constructor() {
+    this.name = 'Bar 类'
+  }
+
+  goodWeather() {
+    return '今天天气好'
+  }
+}
+</script>
 
 <style lang="less">
 .card {
