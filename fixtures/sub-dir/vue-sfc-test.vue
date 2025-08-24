@@ -15,6 +15,8 @@ function foo() {
 }
 
 class Bar {
+  name: string
+
   constructor() {
     this.name = 'Bar 类'
   }
