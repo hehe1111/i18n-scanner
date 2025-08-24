@@ -7,7 +7,7 @@
 ## 安装
 
 ```bash
-npm i i18n-scanner -g
+npm i @hehe1111/i18n-scanner -g
 ```
 
 ## 使用
