@@ -2,6 +2,8 @@
 
 一个用于 `.js|.jsx|.ts|.tsx|.vue` 文件国际化的命令行工具。
 
+演示动图如下：
+
 ![演示](./showcase.gif)
 
 ## 安装
@@ -28,6 +30,8 @@ i18n scan --output <输出文案文件，需要内置默认值>
 
 2. 配置文件 i18n.config.js + 命令行
 
+`i18n.config.js`
+
 ```js
 export default {
   i18nCallee: 'i18nFake.t',
@@ -35,6 +39,10 @@ export default {
   importStatement: 'import i18nFake from "my-awesome-i18n-lib-that-does-not-exist"',
   exclude: ['**/*.config.js']
 }
+```
+
+```bash
+i18n scan <target_dir> -c <path/to/i18n.config.js>
 ```
 
 注意：配置文件里的配置优先级高于命令行的参数配置
