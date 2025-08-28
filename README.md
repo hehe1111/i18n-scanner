@@ -21,11 +21,10 @@ i18n scan -h
 1. 命令行使用
 
 ```bash
-i18n scan 默认扫描当前目录
+i18n scan # 默认扫描当前目录
 i18n scan <glob path>
 i18n scan --ext .js,.jsx,.ts,.tsx
-i18n scan <glob path> --output <输出文案文件，需要内置默认值>
-i18n scan --output <输出文案文件，需要内置默认值>
+i18n scan <glob path> --output <输出文案文件>
 ```
 
 2. 配置文件 i18n.config.js + 命令行
@@ -40,6 +39,8 @@ export default {
   exclude: ['**/*.config.js']
 }
 ```
+
+然后执行：
 
 ```bash
 i18n scan <target_dir> -c <path/to/i18n.config.js>
