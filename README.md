@@ -46,3 +46,7 @@ i18n scan <target_dir> -c <path/to/i18n.config.js>
 ```
 
 注意：配置文件里的配置优先级高于命令行的参数配置
+
+## LICENSE
+
+MIT.
