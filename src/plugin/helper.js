@@ -638,12 +638,9 @@ function writeTextCollectionToFile(file, options) {
 
   const filePath = nodePath.join(options.output, 'zh-CN.json')
   fse.ensureFileSync(filePath)
-  // 序列化可能比较耗时，改为通过遍历手动拼接字符串
-  // const content = `${JSON.stringify(textCollection, null, 2)}`;
-  const content = Object.entries(textCollection)
-    .map(([key, value]) => `  "${key}": "${value}"`)
-    .join(',\n')
-  fse.writeFileSync(filePath, `{\n${content}\n}`, 'utf8')
+  // 使用 JSON.stringify 确保特殊字符（引号、换行符等）被正确转义
+  const content = JSON.stringify(textCollection, null, 2)
+  fse.writeFileSync(filePath, content, 'utf8')
 }
 
 export {
