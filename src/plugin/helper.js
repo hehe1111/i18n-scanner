@@ -174,13 +174,13 @@ function getValueInQuasis(path, index) {
 }
 
 /**
- * 把收集插值的对象转为字符串，作为最后生成的国际化函数调用的第二个参数。
- * 示例：intl.t(key, createPayloadString(placeholderASTHash), '兜底文案')
+ * 把收集插值的对象转为对象字符串，作为最后生成的国际化函数调用的第二个参数。
+ * 示例：intl.t(key, createPayloadObjectString(placeholderASTHash), '兜底文案')
  * @param {object} placeholderASTHash
  * @returns {string}
  * @example { placeholder_1: x, placeholder_2: y } => '{placeholder_1:x,placeholder_2:y}'
  */
-function createPayloadString(placeholderASTHash) {
+function createPayloadObjectString(placeholderASTHash) {
   const keys = Object.keys(placeholderASTHash)
   const length = keys.length
   return keys.reduce((result, key, index) => {
@@ -193,6 +193,19 @@ function createPayloadString(placeholderASTHash) {
 }
 
 /**
+ * 把收集插值的对象转为数组字符串，作为最后生成的国际化函数调用的第二个参数。
+ * 示例：intl.t(key, createPayloadArrayString(placeholderASTHash), '兜底文案')
+ * @param {object} placeholderASTHash
+ * @returns {string}
+ * @example { placeholder_1: x, placeholder_2: y } => '[x,y]'
+ */
+function createPayloadArrayString(placeholderASTHash) {
+  const keys = Object.keys(placeholderASTHash)
+  const values = keys.map(key => placeholderASTHash[key])
+  return `[${values.join(',')}]`
+}
+
+/**
  * 判断当前注释 AST 数组是否含有 i18n-disable 注释
  * @param {babel.types.Comment[]} comments
  * @returns {boolean} 是否含有 i18n-disable 注释
@@ -200,8 +213,8 @@ function createPayloadString(placeholderASTHash) {
 function hasDisableComment(comments) {
   const index = Array.isArray(comments)
     ? comments.findIndex(
-        commentLine => commentLine.value.trim() === I18N_DISABLE
-      )
+      commentLine => commentLine.value.trim() === I18N_DISABLE
+    )
     : -1
   return index > -1
 }
@@ -265,13 +278,15 @@ function saveTextAndGenNewNode({ api, state, text, payload }) {
   textCollection[key] = text
   // 当前文件有字符串需要替换成国际化调用，需要引入国际化包
   state[SHOULD_IMPORT] === undefined && (state[SHOULD_IMPORT] = true)
+  // 根据配置决定第二个参数的格式：数组或对象
+  const emptyPayload = state.useArrayPayload ? '[]' : '{}'
   if (payload) {
     // key、兜底文案都需要加上引号（单双均可）
     return api.template.ast(
       `${state.i18nCallee}('${key}', ${payload}, '${text}')`
     )
   }
-  return api.template.ast(`${state.i18nCallee}('${key}', {}, '${text}')`)
+  return api.template.ast(`${state.i18nCallee}('${key}', ${emptyPayload}, '${text}')`)
 }
 
 /**
@@ -531,7 +546,10 @@ const literalUtils = {
       // _intl.t('intl_1', { placeholder_1: x }, 'hello {placeholder_1}');
       // 如果用 JSON.stringify，则会把变量变成字符串，最终导致替换后，取值会出错：
       // _intl.t('intl_1', { "placeholder_1": "x" }, 'hello {placeholder_1}');
-      const payload = createPayloadString(placeholderASTHash)
+      // 根据配置决定第二个参数的格式：数组或对象
+      const payload = state.useArrayPayload
+        ? createPayloadArrayString(placeholderASTHash)
+        : createPayloadObjectString(placeholderASTHash)
       newNode = saveTextAndGenNewNode({ api, state, text, payload })
       // 在 JSXExpressionContainer 内部替换时，需要用 Expression 而不是 ExpressionStatement
       if (isDirectParentJSXExpressionContainer) {

@@ -146,6 +146,8 @@ async function onScan(pathStr, options) {
     importStatement: parsedConfig.importStatement || options.importStatement,
     i18nCallee: parsedConfig.i18nCallee || options.i18nCallee,
     output,
+    // 是否使用数组格式作为国际化函数调用的第二个参数
+    useArrayPayload: parsedConfig.useArrayPayload ?? false,
     // Vue 相关配置
     vueConfig: {
       version: options.vueVersion ? parseInt(options.vueVersion) : undefined,

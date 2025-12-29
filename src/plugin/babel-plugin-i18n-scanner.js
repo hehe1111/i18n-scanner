@@ -24,6 +24,8 @@ export default declare((api, options, dirname) => {
         enter(_, state) {
           // 记到全局状态，方便后续生成国际化函数调用
           state.i18nCallee = options.i18nCallee
+          // 是否使用数组格式作为第二个参数（插值数据）
+          state.useArrayPayload = options.useArrayPayload ?? false
         },
         exit(programPath, state) {
           // 如果设置了 forceImport 或者当前文件有需要替换的文本，则确保导入国际化包
