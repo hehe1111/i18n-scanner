@@ -394,8 +394,14 @@ const literalUtils = {
     //   // i18n-disable
     //   c: `a ${x}`
     // }
+    // ====================================
+    // 5. 函数调用参数
+    // // i18n-disable
+    // console.error('不要国际化', error)
+    // // i18n-disable
+    // throw new Error('不要国际化')
     targetPath = path.findParent(
-      p => p.isVariableDeclaration() || p.isObjectProperty()
+      p => p.isVariableDeclaration() || p.isObjectProperty() || p.isExpressionStatement() || p.isThrowStatement()
     )
     if (targetPath !== null) {
       return handlePrevDisableComment(targetPath)
