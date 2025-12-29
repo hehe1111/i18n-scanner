@@ -426,19 +426,37 @@ const literalUtils = {
     // 没有大括号包裹，则节点关系是 StringLiteral -> JSXAttribute
     // 有大括号包裹，则节点关系是 StringLiteral -> JSXExpressionContainer -> JSXAttribute
     // 有大括号包裹时，中间会多一层 JSXExpressionContainer
-    const isJSXExpressionContainer = Boolean(
-      path.findParent(p => p.isJSXExpressionContainer())
-    )
-    const isJSXAttribute = Boolean(path.findParent(p => p.isJSXAttribute()))
+    // 检查直接父节点是否是 JSXExpressionContainer（而不是祖先链）
+    // 对于嵌套的 JSX 结构，需要检查直接父节点而不是祖先链
+    const parentNode = path.parentPath
+    const isDirectParentJSXExpressionContainer = parentNode?.isJSXExpressionContainer() ?? false
+    // 检查直接父节点是否是 JSXAttribute
+    const isDirectParentJSXAttribute = parentNode?.isJSXAttribute() ?? false
 
-    // 1. 有大括号包裹的 JSX 属性值
-    // 2. 普通字符串
-    let newNode = saveTextAndGenNewNode({ api, state, text: path.node.value })
-    if (!isJSXExpressionContainer && isJSXAttribute) {
-      // 3. 没有大括号包裹的 JSX 属性值，需要补上大括号
-      // api.types.JSXExpressionContainer 函数只接受 Expression | JSXEmptyExpression
-      newNode = api.types.JSXExpressionContainer(newNode.expression)
+    // saveTextAndGenNewNode 返回的是 ExpressionStatement，需要取 .expression 得到 CallExpression
+    const statementNode = saveTextAndGenNewNode({ api, state, text: path.node.value })
+    // 提取 CallExpression
+    const callExpression = statementNode.expression
+
+    let newNode
+
+    if (isDirectParentJSXAttribute) {
+      // 场景 1：没有大括号包裹的 JSX 属性值，需要补上大括号
+      // 例如：<div title="中文"></div> => <div title={intl.t(...)}></div>
+      // 使用 Babel types API 创建 JSXExpressionContainer
+      newNode = api.types.jSXExpressionContainer(callExpression)
+    } else if (isDirectParentJSXExpressionContainer) {
+      // 场景 2：有大括号包裹的 JSX 属性值或 JSX 元素内容
+      // 例如：<div title={"中文"}></div> => <div title={intl.t(...)}></div>
+      // 或者：<div>{"中文"}</div> => <div>{intl.t(...)}</div>
+      // 直接替换 StringLiteral 为 CallExpression
+      newNode = callExpression
+    } else {
+      // 场景 3：普通字符串场景，直接用 ExpressionStatement 替换即可
+      // 例如：const a = '中文' => const a = intl.t(...)
+      newNode = statementNode
     }
+
     path.replaceWith(newNode)
     // 避免处理 newNode 的字符串子节点
     path.skip()
@@ -461,10 +479,19 @@ const literalUtils = {
     let text
     let newNode
 
+    // 检查直接父节点是否是 JSXExpressionContainer（而不是祖先链）
+    // 模板字符串在 JSX 属性中必须用 {} 包裹，所以只需要检查直接父节点
+    const parentNode = path.parentPath
+    const isDirectParentJSXExpressionContainer = parentNode?.isJSXExpressionContainer() ?? false
+
     if (expressions.length === 0) {
       // 无插值时，quasis 数组只会有一个元素，直接取即可
       text = getValueInQuasis(path, 0)
       newNode = saveTextAndGenNewNode({ api, state, text })
+      // 在 JSXExpressionContainer 内部替换时，需要用 Expression 而不是 ExpressionStatement
+      if (isDirectParentJSXExpressionContainer) {
+        newNode = newNode.expression
+      }
       path.replaceWith(newNode)
       path.skip()
     } else {
@@ -506,6 +533,10 @@ const literalUtils = {
       // _intl.t('intl_1', { "placeholder_1": "x" }, 'hello {placeholder_1}');
       const payload = createPayloadString(placeholderASTHash)
       newNode = saveTextAndGenNewNode({ api, state, text, payload })
+      // 在 JSXExpressionContainer 内部替换时，需要用 Expression 而不是 ExpressionStatement
+      if (isDirectParentJSXExpressionContainer) {
+        newNode = newNode.expression
+      }
       path.replaceWith(newNode)
       path.skip()
     }
@@ -565,7 +596,7 @@ const jsxTextUtils = {
     const text = path.node.value.trim()
     let newNode = saveTextAndGenNewNode({ api, state, text })
     // 替换时需要补上大括号，否则就不会被解析为 JS 的函数调用
-    newNode = api.types.JSXExpressionContainer(newNode.expression)
+    newNode = api.types.jsxExpressionContainer(newNode.expression)
     path.replaceWith(newNode)
     path.skip()
   }
