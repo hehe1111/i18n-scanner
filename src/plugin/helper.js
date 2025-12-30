@@ -22,6 +22,63 @@ const SKIP_I18N = '__skipI18n'
 const I18N_DISABLE = 'i18n-disable'
 
 /**
+ * 检查一个引用路径是否在 console 调用中
+ * @param {babel.NodePath} refPath
+ * @returns {boolean}
+ */
+function isPathInConsoleCall(refPath) {
+  return Boolean(
+    refPath.findParent(p => {
+      if (!p.isCallExpression()) return false
+      const callee = p.node.callee
+      return (
+        callee.type === 'MemberExpression' &&
+        callee.object.type === 'Identifier' &&
+        callee.object.name === 'console'
+      )
+    })
+  )
+}
+
+/**
+ * 递归检查变量是否只在 console 调用中使用
+ * @param {babel.Scope} scope - 作用域
+ * @param {string} varName - 变量名
+ * @param {Set<string>} visited - 已访问的变量名，用于避免循环引用
+ * @returns {boolean} 是否只在 console 调用中使用
+ */
+function isVarOnlyUsedInConsole(scope, varName, visited) {
+  // 避免循环引用导致无限递归
+  if (visited.has(varName)) return true
+  visited.add(varName)
+
+  const binding = scope.getBinding(varName)
+  if (!binding) return false
+
+  // 如果变量没有被引用，不跳过（保守处理）
+  if (binding.referencePaths.length === 0) return false
+
+  // 检查所有引用
+  return binding.referencePaths.every(refPath => {
+    // 1. 如果引用直接在 console 调用中
+    if (isPathInConsoleCall(refPath)) return true
+
+    // 2. 如果引用在另一个变量声明中，递归检查那个变量
+    const parentVarDeclarator = refPath.findParent(p => p.isVariableDeclarator())
+    if (parentVarDeclarator) {
+      const parentVarName = parentVarDeclarator.node.id.name
+      // 如果是引用自身的变量声明（比如 const a = a），跳过
+      if (parentVarName === varName) return true
+      // 递归检查父变量是否只在 console 中使用
+      return isVarOnlyUsedInConsole(parentVarDeclarator.scope, parentVarName, visited)
+    }
+
+    // 3. 其他情况（如函数参数、返回值等），不跳过
+    return false
+  })
+}
+
+/**
  * @param {import("@babel/helper-plugin-utils").BabelAPI} api
  * @param {Object} options - 使用插件时传入的插件参数
  * @param {string} options.output - 文案文件导出目录
@@ -318,6 +375,35 @@ const literalUtils = {
       )
     )
     if (isRequireCall || isImportCall) return true
+
+    // 4. 处理 console.xxx() 调用
+    // 如果 scanConsole 配置为 false（默认），则跳过 console 语句中的字符串
+    if (!state.scanConsole) {
+      const isConsoleCall = Boolean(
+        path.findParent(p => {
+          if (!p.isCallExpression()) return false
+          const callee = p.node.callee
+          // 匹配 console.log、console.error、console.warn 等
+          return (
+            callee.type === 'MemberExpression' &&
+            callee.object.type === 'Identifier' &&
+            callee.object.name === 'console'
+          )
+        })
+      )
+      if (isConsoleCall) return true
+
+      // 4.1 检查变量是否只在 console 调用中使用（包括递归检查）
+      // const a = '你好'; console.log(a) => a 只在 console 中使用，应该跳过
+      // const a = '你好'; const b = `${a}`; console.log(b) => a 间接只在 console 中使用，也应该跳过
+      const variableDeclarator = path.findParent(p => p.isVariableDeclarator())
+      if (variableDeclarator) {
+        const varName = variableDeclarator.node.id.name
+        if (isVarOnlyUsedInConsole(variableDeclarator.scope, varName, new Set())) {
+          return true
+        }
+      }
+    }
 
     // 5. 已经国际化的文案，不需要再重复国际化
     // 场景：

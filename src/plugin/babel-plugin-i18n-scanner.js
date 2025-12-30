@@ -26,6 +26,8 @@ export default declare((api, options, dirname) => {
           state.i18nCallee = options.i18nCallee
           // 是否使用数组格式作为第二个参数（插值数据）
           state.useArrayPayload = options.useArrayPayload ?? false
+          // 是否扫描 console 语句中的文案，默认不扫描
+          state.scanConsole = options.scanConsole ?? false
         },
         exit(programPath, state) {
           // 如果设置了 forceImport 或者当前文件有需要替换的文本，则确保导入国际化包

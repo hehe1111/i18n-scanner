@@ -186,3 +186,36 @@ function App() {
     </>
   )
 }
+
+console.log('你好')
+
+console.error('错误')
+
+console.warn('警告')
+
+console.info('信息')
+
+console.debug('调试')
+
+console.trace('堆栈')
+
+console.group('分组')
+console.groupEnd()
+
+console.groupCollapsed('折叠分组')
+console.groupEnd()
+
+console.count('计数')
+
+console.time('时间')
+console.timeEnd('时间')
+
+console.timeLog('时间')
+
+console.timeEnd('时间')
+
+const g = '你好'
+const h = '世界'
+const i = `你好，${h}`
+console.log(g)
+console.log(i)

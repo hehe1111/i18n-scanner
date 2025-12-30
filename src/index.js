@@ -44,6 +44,8 @@ program
   .option('--no-typescript', 'Do not use TypeScript for generated script tags.')
   .option('--use-setup', 'Use <script setup> syntax for Vue 3.')
   .option('--no-setup', 'Use traditional <script> syntax.')
+  .option('--scan-console', 'Scan and replace text in console statements (default: false).')
+  .option('--no-scan-console', 'Do not scan console statements.')
   .action(onScan)
 
 program.parse()
@@ -148,6 +150,10 @@ async function onScan(pathStr, options) {
     output,
     // 是否使用数组格式作为国际化函数调用的第二个参数
     useArrayPayload: parsedConfig.useArrayPayload ?? false,
+    // 是否扫描 console 语句中的文案，默认不扫描
+    scanConsole: options.scanConsole !== undefined
+      ? options.scanConsole
+      : (parsedConfig.scanConsole ?? false),
     // Vue 相关配置
     vueConfig: {
       version: options.vueVersion ? parseInt(options.vueVersion) : undefined,
