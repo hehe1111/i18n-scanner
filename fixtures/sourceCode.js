@@ -52,7 +52,7 @@
 // J，属，有，前 => JSX 属性值，有插值模板字符串，前置注释，不需要翻译
 // J，内，有，前 => JSX 元素内容，有插值模板字符串，前置注释，不需要翻译
 
-import intl from 'intl'
+import i18nFake from "my-awesome-i18n-lib-that-does-not-exist"
 import a from 'a'
 import { b } from 'b'
 import * as c from 'c'
@@ -124,19 +124,19 @@ function foo() {
 
 const world = '世界'
 const translated = () => {
-  const a = intl.t('hello', {}, '你好')
-  const b = intl.t(`hello`, {}, `你好`)
-  const c = intl.t(`hello world`, { world }, `你好 {world}`)
+  const a = i18nFake.t('hello', {}, '你好')
+  const b = i18nFake.t(`hello`, {}, `你好`)
+  const c = i18nFake.t(`hello world`, { world }, `你好 {world}`)
 
   return (
     <>
-      <p title={intl.t('title', {}, '标题')}></p>
+      <p title={i18nFake.t('title', {}, '标题')}></p>
 
-      <p>{intl.t('content', {}, '内容')}</p>
+      <p>{i18nFake.t('content', {}, '内容')}</p>
 
-      <p title={intl.t(`title`, {}, `标题`)}></p>
+      <p title={i18nFake.t(`title`, {}, `标题`)}></p>
 
-      <p>{intl.t(`content`, {}, `内容`)}</p>
+      <p>{i18nFake.t(`content`, {}, `内容`)}</p>
     </>
   )
 }
