@@ -326,7 +326,7 @@ function handlePrevDisableCommentForJSX(linePath, targetPath) {
  * @param {object} [params.payload] - 模板字符串的插值数据对象
  * @returns {babel.types.Statement} 国际化函数调用的 AST 节点
  */
-function saveTextAndGenNewNode({ api, state, text, payload }) {
+function saveTextAndGenNewNode({ api, state, text, payload, originalTemplateLiteral }) {
   // file 内部使用了一个 Map 来存 TEXT_COLLECTION 对象，file.get 方法内部调用的是 this._map.get(key)
   // const textCollection = path.hub.file.get(TEXT_COLLECTION)
   const textCollection = state.file.get(TEXT_COLLECTION)
@@ -337,8 +337,18 @@ function saveTextAndGenNewNode({ api, state, text, payload }) {
   state[SHOULD_IMPORT] === undefined && (state[SHOULD_IMPORT] = true)
   // 根据配置决定第二个参数的格式：数组或对象
   const emptyPayload = state.useArrayPayload ? '[]' : '{}'
+  if (payload && originalTemplateLiteral) {
+    // 有插值时，第三个参数使用原始的模板字符串节点，保留 ${变量名} 格式
+    // 使用 api.template.ast 生成前两个参数，然后替换第三个参数为原始模板字符串
+    const callExpressionStatement = api.template.ast(
+      `${state.i18nCallee}('${key}', ${payload}, '')`
+    )
+    // 替换第三个参数为原始的模板字符串节点
+    callExpressionStatement.expression.arguments[2] = originalTemplateLiteral
+    return callExpressionStatement
+  }
   if (payload) {
-    // key、兜底文案都需要加上引号（单双均可）
+    // 兼容没有传 originalTemplateLiteral 的情况
     return api.template.ast(
       `${state.i18nCallee}('${key}', ${payload}, '${text}')`
     )
@@ -616,11 +626,14 @@ const literalUtils = {
       // + 第二个 expressions 数组元素 + 第三个 quasis 数组元素
       // + ...
       // + 第n个 expressions 数组元素 + 第n+1个 quasis 数组元素
-      // text 结果形如：'... {placeholder_1} ... {placeholder_2} ...'
+      // text 结果形如：'... ${x} ... ${y} ...'（保留原始模板字符串格式）
       text = expressions.reduce((result, ast, index) => {
         const _index = index + 1
         const placeholder = `placeholder_${_index}`
-        result += `{${placeholder}}`
+        // 获取插值表达式的源码
+        const expressionCode = generate(ast).code
+        // 兜底文案保留原始的模板字符串格式：${变量名}
+        result += `\${${expressionCode}}`
         result += getValueInQuasis(path, _index)
 
         // 收集插值
@@ -629,7 +642,7 @@ const literalUtils = {
         // 1. `a ${x}`     => { quasis: ['a', ''], expressions: [x] }     => x
         // 2. `a ${x + y}` => { quasis: ['a', ''], expressions: [x + y] } => x + y
         // 3. `a ${x()}`   => { quasis: ['a', ''], expressions: [x()] }   => x()
-        placeholderASTHash[placeholder] = generate(ast).code
+        placeholderASTHash[placeholder] = expressionCode
         return result
       }, getValueInQuasis(path, 0))
 
@@ -642,7 +655,8 @@ const literalUtils = {
       const payload = state.useArrayPayload
         ? createPayloadArrayString(placeholderASTHash)
         : createPayloadObjectString(placeholderASTHash)
-      newNode = saveTextAndGenNewNode({ api, state, text, payload })
+      // 传递原始的模板字符串节点，用于保留 ${变量名} 格式
+      newNode = saveTextAndGenNewNode({ api, state, text, payload, originalTemplateLiteral: path.node })
       // 在 JSXExpressionContainer 内部替换时，需要用 Expression 而不是 ExpressionStatement
       if (isDirectParentJSXExpressionContainer) {
         newNode = newNode.expression
